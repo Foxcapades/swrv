@@ -54,12 +54,12 @@ type Server interface {
 	// If unset, the Server will default to a 30-second timeout.
 	WithWriteTimeout(timeout time.Duration) Server
 
-	// WithController adds the given ControllerSpec to the Server.
+	// WithControllers adds the given ControllerSpec to the Server.
 	//
 	// When the Server is started, this ControllerSpec will be built into a
 	// controller instance that will handle incoming HTTP requests that match the
 	// target path and filters.
-	WithController(controller ControllerSpec) Server
+	WithControllers(controller ControllerSpec) Server
 
 	// WithRequestFilters appends global RequestFilter instances that will be hit
 	// for requests to any controller registered with the Server instance.
@@ -168,7 +168,7 @@ func (s *server) WithLoggerEntry(logger *logrus.Entry) Server {
 
 // Controller //////////////////////////////////////////////////////////////////
 
-func (s *server) WithController(controller ControllerSpec) Server {
+func (s *server) WithControllers(controller ControllerSpec) Server {
 	if s.started {
 		s.logger.Fatalln("cannot add controllers to a server after it has started")
 	}
