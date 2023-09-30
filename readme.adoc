@@ -4,6 +4,11 @@ Yet another Go HTTP framework.
 
 [source, go]
 ----
+import "github.com/foxcapades/swrv/pkg/swrv"
+----
+
+[source, go]
+----
 type Response struct {
   Message string `json:"message"`
 }
