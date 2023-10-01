@@ -180,4 +180,8 @@ func (c controller) handleResponse(writer http.ResponseWriter, request Request, 
 	if _, err := bufio.NewWriter(writer).ReadFrom(serialized); err != nil {
 		c.logger.Errorln("failed to copy body from reader to response writer: " + err.Error())
 	}
+
+	if fn := response.GetOnComplete(); fn != nil {
+		fn()
+	}
 }

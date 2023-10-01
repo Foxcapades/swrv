@@ -33,6 +33,13 @@ type Response interface {
 
 	// WithHeader sets the target response header to the given values.
 	WithHeader(header, value string, values ...string) Response
+
+	// OnComplete sets a callback function that will be called after the request
+	// processing is complete and the response has been sent to the HTTP client.
+	OnComplete(fn func()) Response
+
+	// GetOnComplete returns the OnComplete function, if one is present.
+	GetOnComplete() func()
 }
 
 // NewResponse creates a new Response instance.
@@ -48,9 +55,10 @@ func NewResponse() Response {
 }
 
 type response struct {
-	code    int
-	body    any
-	headers responseHeaders
+	code       int
+	body       any
+	headers    responseHeaders
+	onComplete func()
 }
 
 func (r *response) GetCode() int {
@@ -78,4 +86,13 @@ func (r *response) GetHeaders() ResponseHeaders {
 func (r *response) WithHeader(header, value string, values ...string) Response {
 	r.headers.Set(header, value, values...)
 	return r
+}
+
+func (r *response) OnComplete(fn func()) Response {
+	r.onComplete = fn
+	return r
+}
+
+func (r *response) GetOnComplete() func() {
+	return r.onComplete
 }

@@ -269,7 +269,7 @@ func (s *server) Start(router *mux.Router) {
 
 	s.clear()
 
-	s.logger.Debugf("starting server at %s\n", serve.Addr)
+	s.logger.Infof("starting server at %s\n", serve.Addr)
 	s.logger.Fatalln(serve.ListenAndServe())
 }
 
