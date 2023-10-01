@@ -93,9 +93,6 @@ func (c controller) handleResponse(writer http.ResponseWriter, request Request, 
 		}
 	})
 
-	// Write out the status code
-	writer.WriteHeader(response.GetCode())
-
 	c.logger.Debugln("processing response body")
 
 	// Fetch the response body.
@@ -103,12 +100,15 @@ func (c controller) handleResponse(writer http.ResponseWriter, request Request, 
 
 	// If there is no response body, then stop here.
 	if body == nil {
+		writer.WriteHeader(response.GetCode())
 		c.logger.Traceln("response was nil, returning empty body")
 		return
 	}
 
 	if reader, ok := body.(io.ReadCloser); ok {
 		c.logger.Traceln("response body is a readcloser")
+
+		writer.WriteHeader(response.GetCode())
 
 		defer func(reader io.ReadCloser) {
 			if err := reader.Close(); err != nil {
@@ -125,6 +125,8 @@ func (c controller) handleResponse(writer http.ResponseWriter, request Request, 
 
 	if reader, ok := body.(io.Reader); ok {
 		c.logger.Traceln("response body is a reader")
+
+		writer.WriteHeader(response.GetCode())
 
 		if _, err := bufio.NewWriter(writer).ReadFrom(reader); err != nil {
 			c.logger.Errorln("failed to copy body from reader to response writer: " + err.Error())
@@ -151,6 +153,8 @@ func (c controller) handleResponse(writer http.ResponseWriter, request Request, 
 	if !setContentType {
 		writer.Header().Set(HeaderContentType, serializer.ContentType())
 	}
+
+	writer.WriteHeader(response.GetCode())
 
 	// Attempt to serialize the response body.
 	serialized, err := serializer.Serialize(body)
