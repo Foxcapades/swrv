@@ -28,3 +28,64 @@ func main() {
     Start(nil)
 }
 ----
+
+More examples available at https://github.com/Foxcapades/swrv-examples[].
+
+== Concepts
+
+=== Controllers
+
+A controller is a collection of filters and a request handler that process an
+incoming HTTP request and return a response.  The core of a controller is the
+request handler which is intended to perform the core logic of the request
+processing.
+
+=== Request Filters
+
+A request filter is a middleware layer that processes a request before it
+reaches the controller, optionally halting the request from further processing
+and forcing an early response.  Examples of request filters include
+authentication layers, request-id generation, request timing starts.
+
+If a request filter returns `nil`, the request will continue processing, moving
+on to either the next registered request filter, or the controller.  If a
+request filter returns a non-`nil` response, that response will be returned to
+the calling HTTP client with no further request processing; this response will,
+however, be processed by <<Response Filters>>.
+
+Request filters are executed in the order they are registered, with global
+request filters being applied before controller specific request filters.
+
+=== Response Filters
+
+A response filter is a middleware layer that processes a response before it is
+returned to the HTTP client.  Response filters may modify or entirely replace
+the response before it goes out the door.  Response filters are required to
+return a `Response` value.  Examples of response filters include request timing
+ends and response code loggers.
+
+If a response filter returns `nil` the response to the client will be a 500
+error.
+
+Response filters are always hit.
+
+Response filters are executed in the order they are registered with global
+response filters being applied _after_ controller-specific response filters.
+
+=== Object Serializers
+
+An object serializer is a type that is used to serialize non-stream response
+objects to be returned to the HTTP client.  For example, a JSON object
+serializer may be used to encode response body values as JSON.
+
+If a response body is an `io.Reader` or `io.ReadCloser` the value will be
+streamed directly to the client with no processing.  If the response body is
+an `io.ReadCloser` it will be closed when streaming is completed.
+
+In addition to serializing data, object serializers may choose which objects or
+responses they apply to.  So, for example, an object serializer may look for a
+`Content-Type` header and choose to process the response only if the header
+value is `application/json`.
+
+Swrv includes a JSON serializer by default which may be used with an optional
+response filter, or may be used to serialize all non-stream response bodies.
