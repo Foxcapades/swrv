@@ -27,6 +27,10 @@ func (r *request) Raw() *http.Request {
 	return r.request
 }
 
+func (r *request) Method() string {
+	return r.request.Method
+}
+
 func (r *request) AdditionalContext() RequestContext {
 	return r.context
 }

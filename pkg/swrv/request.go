@@ -12,6 +12,9 @@ type Request interface {
 	// Raw returns the underling http.Request struct pointer.
 	Raw() *http.Request
 
+	// Method returns the HTTP request method used.
+	Method() string
+
 	// AdditionalContext returns the RequestContext object attached to this
 	// request.
 	//
