@@ -17,3 +17,11 @@ type ResponseFilter interface {
 	// returns nil, the Server will respond with a 500 error.
 	FilterResponse(request Request, response Response) Response
 }
+
+// A ResponseFilterFunc is a function that implements the ResponseFilter
+// interface.
+type ResponseFilterFunc func(request Request, response Response) Response
+
+func (r ResponseFilterFunc) FilterResponse(request Request, response Response) Response {
+	return r(request, response)
+}
