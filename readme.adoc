@@ -7,6 +7,9 @@ Yet another Go HTTP framework.
 import "github.com/foxcapades/swrv/pkg/swrv"
 ----
 
+A simple way to setup an HTTP server with request and response filtering.
+
+.Simple Setup
 [source, go]
 ----
 type Response struct {
